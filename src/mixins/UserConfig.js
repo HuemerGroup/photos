@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2018 John Molakvoæ <skjnldsv@protonmail.com>
+ * @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
@@ -20,27 +20,39 @@
  *
  */
 
-import getGridConfig from '../services/GridConfig'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+import { loadState } from '@nextcloud/initial-state'
+import axios from '@nextcloud/axios'
 
-/**
- * Get the current used grid config
- */
+const eventName = 'photos:user-config-changed'
+
 export default {
 	data() {
 		return {
-			gridConfig: {},
+			croppedLayout: loadState('photos', 'croppedLayout') === 'true',
 		}
 	},
 
 	created() {
-		getGridConfig.$on('changed', val => {
-			this.gridConfig = val
-		})
-		console.debug(`[${appName}]`, 'Grid config', Object.assign({}, getGridConfig.gridConfig))
-		this.gridConfig = getGridConfig.gridConfig
+		console.debug(`[${appName}]`, 'User config', Object.assign({}, this.$data))
+		subscribe(eventName, this.updateLocalSetting)
 	},
 
 	beforeDestroy() {
-		getGridConfig.$off('changed', this.gridConfig)
+		unsubscribe(eventName, this.updateLocalSetting)
+	},
+
+	methods: {
+		updateLocalSetting({ setting, value }) {
+			this[setting] = value
+		},
+		updateSetting(setting) {
+			const value = this[setting]
+			axios.put(generateUrl('apps/photos/api/v1/config/' + setting), {
+				value: value.toString(),
+			})
+			emit(eventName, { setting, value })
+		},
 	},
 }

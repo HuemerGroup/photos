@@ -65,12 +65,15 @@ import GridConfigMixin from '../mixins/GridConfig'
 
 export default {
 	name: 'Timeline',
+
 	components: {
 		EmptyContent,
 		VirtualGrid,
 		Navigation,
 	},
+
 	mixins: [GridConfigMixin],
+
 	props: {
 		loading: {
 			type: Boolean,
@@ -110,7 +113,6 @@ export default {
 		fileList() {
 			return this.timeline
 				.map(id => this.files[id])
-				.filter(file => !!file)
 		},
 
 		// is current folder empty?
