@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
  *
@@ -58,7 +60,7 @@ class ApiController extends Controller {
 	 *
 	 * @return JSONResponse an empty JSONResponse with respective http status code
 	 */
-	public function setUserConfig($key, $value) {
+	public function setUserConfig(string $key, string $value): JSONResponse {
 		$user = $this->userSession->getUser();
 		if (is_null($user)) {
 			return new JSONResponse([], Http::STATUS_PRECONDITION_FAILED);
