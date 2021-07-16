@@ -16,7 +16,7 @@
     <repository>https://github.com/nextcloud/photos.git</repository>
     <default_enable />
     <dependencies>
-        <nextcloud min-version="21" max-version="21" />
+        <nextcloud min-version="19" max-version="21" />
     </dependencies>
     <navigations>
         <navigation>
